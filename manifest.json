@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "tkenner.spruchband",
+  "name": "Spruchband",
+  "version": "1.0.0",
+  "author": "Thomas Kenner",
+  "description": "Every few minutes a figure pulls a saying across all your screens",
+  "kinds": [
+    "service",
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "service": "Service.qml",
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Spruchband",
+    "description": "Show a banner now, pause, and open the Spruchband settings",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
