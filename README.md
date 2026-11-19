@@ -64,7 +64,7 @@ notification quiet state, and asks Hyprland which window is full screen.
 
 ## License
 
-Spruchband is MIT licensed, see `LICENSE`. The program bundles these fonts
+Spruchband is MIT licensed, see `LICENSE`. The program bundles these fonts (see `NOTICE`)
 under their own licenses:
 
 | Font | Author | License |
