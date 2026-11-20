@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/fonts">
+        <file alias="fredoka.ttf">fonts/fredoka.ttf</file>
+        <file alias="caveat.ttf">fonts/caveat.ttf</file>
+        <file alias="tiltneon.ttf">fonts/tiltneon.ttf</file>
+        <file alias="pressstart2p.ttf">fonts/pressstart2p.ttf</file>
+        <file alias="cormorant_italic.ttf">fonts/cormorant_italic.ttf</file>
+        <file alias="permanentmarker.ttf">fonts/permanentmarker.ttf</file>
+        <file alias="bangers.ttf">fonts/bangers.ttf</file>
+        <file alias="imfell_italic.ttf">fonts/imfell_italic.ttf</file>
+    </qresource>
+</RCC>

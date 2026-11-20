@@ -1,0 +1,18 @@
+{
+ "%n sayings": {
+  "one": "%n saying",
+  "other": "%n sayings"
+ },
+ "Every %n minutes": {
+  "one": "Every minute",
+  "other": "Every %n minutes"
+ },
+ "Next banner in about %n minutes": {
+  "one": "Next banner in about a minute",
+  "other": "Next banner in about %n minutes"
+ },
+ "Running · every %n minutes": {
+  "one": "Running · every minute",
+  "other": "Running · every %n minutes"
+ }
+}

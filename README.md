@@ -56,15 +56,59 @@ or Hyprland configuration.
 
 ## Requirements
 
-`bin/spruchband` is a prebuilt x86_64 program linked against the system's Qt 6.
+`bin/spruchband` is an x86_64 program linked against the system's Qt 6.
 It needs `qt6-base`, `qt6-declarative` and `layer-shell-qt`, which an Omarchy
 install normally already has; if banners never appear, run
-`omarchy pkg add layer-shell-qt`. It reads Omarchy's theme, language and
-notification quiet state, and asks Hyprland which window is full screen.
+`omarchy pkg add layer-shell-qt`.
+
+## What the program touches
+
+- **Network:** none. It opens no network connections; Qt Network is linked
+  only for local sockets.
+- **Its own files:** reads and writes `~/.config/spruchband.conf` and
+  `~/.local/share/spruchband/collections/`.
+- **Omarchy:** reads the current theme (`~/.local/state/omarchy/current/`), the
+  language (`~/.config/omarchy/language` and
+  `$OMARCHY_PATH/default/i18n/locales.json`) and the notification quiet state
+  (`~/.local/state/omarchy/notifications/quiet.json`; on older Omarchy versions
+  it runs `makoctl mode` instead).
+- **Hyprland:** asks Hyprland's sockets in `$XDG_RUNTIME_DIR/hypr/` for the
+  monitors and windows (full screen, locked, screens off) and runs
+  `hyprctl -j getoption decoration:rounding` for the corner rounding.
+- **Local sockets:** listens on `$XDG_RUNTIME_DIR/spruchband.sock` for
+  `spruchband now|pause|resume|toggle|status` and on `spruchband-ui.sock` so only one
+  settings window opens.
+- **Desktop:** only when you ask for it in the settings window: to import
+  sayings it opens the file chooser through xdg-desktop-portal (D-Bus) and
+  reads the file you pick; "open folder" shows the sayings folder in your file
+  manager.
+
+## Source and build
+
+The program's source is in this repository: `src/` (C++, and the QML of the
+settings window), `tests/` and `spruchband.pro`. `bin/spruchband` is not built
+on a developer machine. The workflow in `.github/workflows/build.yml` builds it
+from `src/` in an Arch Linux container that takes Qt from Omarchy's package
+mirror, runs the tests, records a signed build provenance attestation and
+commits the binary on its own as `Build bin/spruchband from <source commit>`.
+To check that your copy came from that workflow:
+
+```sh
+gh attestation verify bin/spruchband --repo tomkenner/omarchy-spruchband
+```
+
+To build it yourself (needs `base-devel`, `qt6-base`, `qt6-declarative` and
+`layer-shell-qt`):
+
+```sh
+mkdir -p build && cd build
+qmake6 ../spruchband.pro && make -j"$(nproc)"
+install -m 755 -s spruchband ../bin/spruchband
+```
 
 ## License
 
-Spruchband is MIT licensed, see `LICENSE`. The program bundles these fonts (see `NOTICE`)
+Spruchband is MIT licensed, see `LICENSE`. The program bundles these fonts from `src/fonts/` (see `NOTICE`)
 under their own licenses:
 
 | Font | Author | License |
