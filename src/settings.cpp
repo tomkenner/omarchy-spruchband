@@ -1,5 +1,7 @@
 #include "settings.h"
 
+#include "banners.h"
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -117,14 +119,14 @@ std::optional<Coll> load(const QString &id) {
     QStringList all = QString::fromUtf8(f.readAll()).split('\n');
     QString name = id;
     if (!all.isEmpty() && all.first().startsWith("# ")) name = all.takeFirst().mid(2).trimmed();
-    return Coll{id, name, parse(all.join('\n'))};
+    return Coll{id, clipText(name, MAX_NAME), parse(all.join('\n'))};
 }
 
 QStringList parse(const QString &text) {
     QStringList out;
     for (const QString &l : text.split('\n')) {
         const QString t = l.trimmed();
-        if (!t.isEmpty() && !t.startsWith('#')) out << t;
+        if (!t.isEmpty() && !t.startsWith('#')) out << clipText(t);
     }
     return out;
 }
@@ -133,7 +135,9 @@ bool save(const Coll &c) {
     // Written beside the target and renamed, so a crash never leaves half a file.
     QSaveFile f(fileFor(c.id));
     if (!f.open(QIODevice::WriteOnly)) return false;
-    f.write(("# " + c.name + "\n" + c.lines.join('\n') + "\n").toUtf8());
+    // The name stays on its line, whatever a file name brought along.
+    const QString name = clipText(c.name.simplified(), MAX_NAME);
+    f.write(("# " + name + "\n" + c.lines.join('\n') + "\n").toUtf8());
     return f.commit();
 }
 

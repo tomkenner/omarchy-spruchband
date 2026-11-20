@@ -1,4 +1,5 @@
 #include <QDir>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QJsonDocument>
 #include <QSet>
@@ -98,6 +99,70 @@ private slots:
                 QVERIFY(stage.render(p, W, end.height(), tr, tr.duration() + 0.1f, tr.up));
             }
         }
+    }
+
+    // A saying far longer than any banner is cut when a collection is read and
+    // again in the shared rendering path, so laying it out stays quick.
+    void longSayingsAreBounded() {
+        const QString huge = QString("Wasser! ").repeated(500'000); // 4 MB, one line
+        const QStringList parsed = Collections::parse(huge + "\nkurz\n");
+        QCOMPARE(parsed.size(), 2);
+        QVERIFY(parsed[0].size() <= MAX_SAYING);
+        QVERIFY(parsed[0].endsWith(QChar(0x2026)));
+        QCOMPARE(parsed[1], QString("kurz"));
+        QCOMPARE(clipText("kurz"), QString("kurz"));
+        // Never cut inside a character.
+        const QString emoji = clipText(QString::fromUtf8("😀👍🏽").repeated(MAX_SAYING));
+        QVERIFY(emoji.size() <= MAX_SAYING);
+        QVERIFY(emoji.chopped(1).endsWith(QString::fromUtf8("😀")) || emoji.chopped(1).endsWith(QString::fromUtf8("👍🏽")));
+        const QString marks = clipText("a" + QString(QChar(0x0301)).repeated(10'000));
+        QVERIFY(marks.size() <= MAX_SAYING);
+
+        Stage stage(1);
+        QElapsedTimer clock;
+        clock.start();
+        for (const Figure *f : Figures::all()) { // every banner kind, largest settings
+            Train tr = stage.makeTrain(*f, huge, Style::Cartoon, 200, 80, 40, 1, 1920, Figures::persons(),
+                                       [] { return 0.4f; });
+            QVERIFY(tr.L.text.size() <= MAX_SAYING);
+            QImage img(1920, int(tr.height()) + 1, QImage::Format_ARGB32_Premultiplied);
+            img.fill(Qt::transparent);
+            QPainter p(&img);
+            stage.render(p, 1920, img.height(), tr, (1920 * 0.6f - tr.x0) / tr.v, tr.up);
+        }
+        QVERIFY2(clock.elapsed() < 5000, qPrintable(QString::number(clock.elapsed())));
+    }
+
+    void importClipsLongSayingsAndNames() {
+        Settings set(m_dir.path() + "/l.conf");
+        Backend backend(&set);
+        write(m_dir.path() + "/long.txt", QString("x").repeated(100'000).toUtf8() + "\nok\n");
+        QVERIFY(backend.importFile(m_dir.path() + "/long.txt"));
+        bool found = false;
+        for (const Coll &c : Collections::list())
+            if (c.name == "long") {
+                found = true;
+                QCOMPARE(c.lines.size(), 2);
+                QCOMPARE(c.lines[0].size(), MAX_SAYING);
+                QCOMPARE(c.lines[1], QString("ok"));
+            }
+        QVERIFY(found);
+        // A name stays one short line, even one that came with line breaks.
+        QVERIFY(Collections::save({"cn", "A\nB " + QString("n").repeated(1000), {"x"}}));
+        const auto c = Collections::load("cn");
+        QVERIFY(c && c->name.startsWith("A B ") && c->name.size() <= Collections::MAX_NAME);
+        QCOMPARE(c->lines, QStringList({"x"}));
+    }
+
+    void settingsStayInRange() {
+        const QString path = m_dir.path() + "/r.conf";
+        write(path, "[General]\nsize=100000\nband=-5\nspeed=0\ndir=7\nquietFrom=99\n");
+        Settings set(path);
+        QCOMPARE(set.size(), 200);
+        QCOMPARE(set.band(), 18);
+        QCOMPARE(set.speed(), 40);
+        QCOMPARE(set.direction(), 1);
+        QCOMPARE(set.quietFrom(), 23);
     }
 
     // Two screens side by side show the same picture as one wide screen.

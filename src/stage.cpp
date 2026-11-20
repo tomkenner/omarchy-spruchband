@@ -38,7 +38,9 @@ Train Stage::makeTrain(const Figure &fig, const QString &text, Style style, floa
     Train tr;
     tr.fig = &fig;
     tr.kind = &kind;
-    tr.L = kind.layout(g, text, bh, s, pool, rnd, fig);
+    // Collections clip their sayings when they are read; this is the backstop
+    // for every other way text gets here.
+    tr.L = kind.layout(g, clipText(text), bh, s, pool, rnd, fig);
     tr.style = style;
     tr.s = s;
     tr.bh = bh;

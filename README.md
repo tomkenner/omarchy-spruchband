@@ -26,7 +26,8 @@ For key bindings: `spruchband now`, `spruchband toggle`, `spruchband status`.
 over stdin and stdout. The program draws one transparent, click-through
 layer-shell strip per screen, so the drawing never runs inside the shell.
 Settings live in `~/.config/spruchband.conf`, sayings in
-`~/.local/share/spruchband/collections/` (one per line, first line `# Name`).
+`~/.local/share/spruchband/collections/` (one per line, first line `# Name`;
+a saying longer than 200 characters is shortened to 200).
 
 ## Install
 

@@ -3,7 +3,7 @@ QT += core gui qml quick quickcontrols2 dbus network
 CONFIG += c++20 release
 TARGET = spruchband
 TEMPLATE = app
-DEFINES += APP_VERSION=\\\"1.0.0\\\"
+DEFINES += APP_VERSION=\\\"1.0.1\\\"
 LIBS += -lLayerShellQtInterface
 
 HEADERS += \

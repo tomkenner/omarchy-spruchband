@@ -91,6 +91,7 @@ Dialog {
             TextArea {
                 id: linesArea
                 placeholderText: qsTr("One saying per line")
+                textFormat: TextEdit.PlainText
                 wrapMode: TextEdit.Wrap
                 Material.roundedScale: theme.radius
             }

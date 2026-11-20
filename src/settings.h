@@ -33,19 +33,21 @@ public:
     void setStyles(const QStringList &v) { set("styles", v.isEmpty() ? QStringList{QString()} : v); }
     QStringList collections() const;
     void setCollections(const QStringList &v) { set("collections", v.isEmpty() ? QStringList{QString()} : v); }
-    int size() const { return m_s.value("size", 88).toInt(); }
+    // Sizes and speed stay within the settings window's sliders, whatever the
+    // file says, so a banner's layout stays bounded.
+    int size() const { return std::clamp(m_s.value("size", 88).toInt(), 36, 200); }
     void setSize(int v) { set("size", v); }
-    int band() const { return m_s.value("band", 36).toInt(); }
+    int band() const { return std::clamp(m_s.value("band", 36).toInt(), 18, 80); }
     void setBand(int v) { set("band", v); }
-    int speed() const { return m_s.value("speed", 220).toInt(); }
+    int speed() const { return std::clamp(m_s.value("speed", 220).toInt(), 40, 600); }
     void setSpeed(int v) { set("speed", v); }
-    int direction() const { return m_s.value("dir", 0).toInt(); }
+    int direction() const { return std::clamp(m_s.value("dir", 0).toInt(), -1, 1); }
     void setDirection(int v) { set("dir", v); }
     bool quiet() const { return m_s.value("quiet", true).toBool(); }
     void setQuiet(bool v) { set("quiet", v); }
-    int quietFrom() const { return m_s.value("quietFrom", 22).toInt(); }
+    int quietFrom() const { return std::clamp(m_s.value("quietFrom", 22).toInt(), 0, 23); }
     void setQuietFrom(int v) { set("quietFrom", v); }
-    int quietTo() const { return m_s.value("quietTo", 7).toInt(); }
+    int quietTo() const { return std::clamp(m_s.value("quietTo", 7).toInt(), 0, 23); }
     void setQuietTo(int v) { set("quietTo", v); }
     bool respectDnd() const { return m_s.value("dnd", true).toBool(); }
     void setRespectDnd(bool v) { set("dnd", v); }
@@ -73,12 +75,15 @@ struct Coll {
 };
 
 namespace Collections {
+// Longest collection name kept, in UTF-16 code units.
+constexpr qsizetype MAX_NAME = 80;
 QString dir();
 void setDir(const QString &dir); // tests
 // Creates the sample collection in the current language on first start.
 void ensureDefaults();
 QList<Coll> list();
 std::optional<Coll> load(const QString &id);
+// One saying per non-empty line, each clipped to MAX_SAYING.
 QStringList parse(const QString &text);
 bool save(const Coll &c);
 void remove(const QString &id);

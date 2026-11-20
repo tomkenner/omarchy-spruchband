@@ -33,7 +33,11 @@ ApplicationWindow {
         function onMessage(text) { toast.show(text) }
     }
 
+    // Labels show plain text: what comes from files or the background service
+    // (collection names, messages, status) is never read as markup, so it can
+    // neither style the window nor load an image.
     component Hint: Label {
+        textFormat: Text.PlainText
         color: win.muted
         font.pixelSize: 13
         wrapMode: Text.WordWrap
@@ -104,6 +108,7 @@ ApplicationWindow {
                     }
                     Label {
                         text: backend.statusText
+                        textFormat: Text.PlainText
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                         Layout.bottomMargin: 4
@@ -203,10 +208,23 @@ ApplicationWindow {
                             required property var modelData
                             Layout.fillWidth: true
                             CheckBox {
+                                id: collBox
                                 Layout.fillWidth: true
                                 text: modelData.name + "  ·  " + qsTr("%n sayings", "", modelData.count)
                                 checked: backend.activeCollections.indexOf(modelData.id) >= 0
                                 onToggled: backend.setCollectionActive(modelData.id, checked)
+                                // The Material check box's label, but as plain text:
+                                // the name is whatever the collection file says.
+                                contentItem: Text {
+                                    leftPadding: collBox.indicator && !collBox.mirrored ? collBox.indicator.width + collBox.spacing : 0
+                                    rightPadding: collBox.indicator && collBox.mirrored ? collBox.indicator.width + collBox.spacing : 0
+                                    text: collBox.text
+                                    textFormat: Text.PlainText
+                                    font: collBox.font
+                                    color: collBox.enabled ? collBox.Material.foreground : collBox.Material.hintTextColor
+                                    elide: Text.ElideRight
+                                    verticalAlignment: Text.AlignVCenter
+                                }
                             }
                             Button {
                                 text: qsTr("Edit")
@@ -356,6 +374,7 @@ ApplicationWindow {
         }
         contentItem: Label {
             id: toastLabel
+            textFormat: Text.PlainText
             wrapMode: Text.WordWrap
         }
         Timer {

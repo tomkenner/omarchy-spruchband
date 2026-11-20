@@ -26,6 +26,14 @@ struct Layout {
 
 using Rnd = std::function<float()>;
 
+// The longest saying a banner carries, in UTF-16 code units. Every train is
+// laid out from clipped text (Stage::makeTrain), so measuring and drawing a
+// banner stay bounded whatever a collection file holds.
+constexpr qsizetype MAX_SAYING = 200;
+// s cut at a character boundary to at most max code units, ending in "…"
+// when anything was cut.
+QString clipText(const QString &s, qsizetype max = MAX_SAYING);
+
 class BannerKind {
 public:
     virtual ~BannerKind() = default;

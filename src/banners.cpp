@@ -1,9 +1,27 @@
 #include "banners.h"
 
+#include <QTextBoundaryFinder>
 #include <algorithm>
 #include <cmath>
 
 using namespace Opt;
+
+QString clipText(const QString &s, qsizetype max) {
+    if (s.size() <= max) return s;
+    // Room for the ellipsis; never split a character (surrogate pair, emoji
+    // sequence, letter with accents). Only the head is analysed.
+    const QString head = s.left(max);
+    QTextBoundaryFinder f(QTextBoundaryFinder::Grapheme, head);
+    f.setPosition(max - 1);
+    if (!f.isAtBoundary()) f.toPreviousBoundary();
+    qsizetype cut = f.position();
+    if (cut <= 0) {
+        // One endless "character" (a base with thousands of marks): cut anyway.
+        cut = max - 1;
+        if (cut > 0 && head[cut - 1].isHighSurrogate()) cut--;
+    }
+    return head.left(cut).trimmed() + QChar(0x2026);
+}
 
 namespace {
 
