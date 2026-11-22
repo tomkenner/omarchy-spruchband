@@ -322,7 +322,9 @@ public:
             st.dist = dist / fs + i * 13;
             f->bob(st, bob);
             if (g.st == Style::Emoji) {
-                g.emoji(f->emoji, poleX(int(i)) - d * 11 * fs, ground - 31 * fs, 60 * fs, (d > 0) == f->emojiFacesLeft);
+                emojiGait(*f, st, bob);
+                g.emoji(f->emoji, poleX(int(i)) - d * 11 * fs, ground - 31 * fs + bob[0] * 60 * fs, 60 * fs,
+                        (d > 0) == f->emojiFacesLeft, bob[1] * d);
             } else {
                 g.push(poleX(int(i)) - d * 10 * fs, ground + bob[0] * fs, 0, d * fs, fs);
                 f->draw(g, st);

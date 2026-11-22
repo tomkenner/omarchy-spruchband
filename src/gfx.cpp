@@ -606,12 +606,18 @@ void Gfx::text(const QString &s, float x0, float y0, float size, uint32_t col, f
 }
 
 // Emoji as the figure (Emoji style).
-void Gfx::emoji(const QString &e, float x, float y, float size, bool mirror) {
+void Gfx::emoji(const QString &e, float x, float y, float size, bool mirror, float rot) {
     QFont f(QStringLiteral("Noto Color Emoji"));
     f.setPixelSize(std::max(1, int(roundK(size))));
     const QFontMetricsF fm(f);
     c.save();
     c.translate(x, y);
+    // Rotate about the bottom edge so the emoji rocks from one foot to the other.
+    if (rot != 0) {
+        c.translate(0, size * 0.42f);
+        c.rotate(deg(rot));
+        c.translate(0, -size * 0.42f);
+    }
     if (mirror) c.scale(-1, 1);
     c.setFont(f);
     c.setPen(Qt::black);

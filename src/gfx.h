@@ -130,7 +130,7 @@ public:
     float measure(const QString &s, float size, FontRole role = FontRole::Default);
     void text(const QString &s, float x0, float y0, float size, uint32_t col, float rot = 0,
               FontRole role = FontRole::Default, uint32_t neon = 0xFFFF4FD8);
-    void emoji(const QString &e, float x, float y, float size, bool mirror);
+    void emoji(const QString &e, float x, float y, float size, bool mirror, float rot = 0);
 
     // Paper texture over everything drawn so far (target must start transparent).
     static void grain(QPainter &c, float w, float h);

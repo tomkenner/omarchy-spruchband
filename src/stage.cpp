@@ -135,14 +135,23 @@ bool Stage::drawInto(Gfx &g, const Train &tr, float el, float laneY, float P, fl
     if (tr.kind == &Banners::transparent()) {
         tr.kind->draw(g, tr.L, fx + d * 10 * s, laneY, d, tA, tr.bh, s, laneY, distPx);
     } else {
-        const float tx = d * fig.towX * s, ty = fig.towY * s;
-        const float ax = fx + tx * std::cos(rot) - ty * std::sin(rot);
-        const float ay = gy + tx * std::sin(rot) + ty * std::cos(rot);
+        const bool emo = tr.style == Style::Emoji;
+        const float es = (fig.top + fig.bottom) * s * 0.95f;
+        float gait[2] = {0, 0};
+        if (emo) emojiGait(fig, st, gait);
+        const float cy = (fig.air ? gy + (fig.bottom - fig.top) * s / 2 : gy - fig.top * s / 2) + gait[0] * es;
+        float ax, ay;
+        if (emo && !std::isnan(fig.emojiTowX)) {
+            ax = fx + d * fig.emojiTowX * es;
+            ay = cy + fig.emojiTowY * es;
+        } else {
+            const float tx = d * fig.towX * s, ty = fig.towY * s;
+            ax = fx + tx * std::cos(rot) - ty * std::sin(rot);
+            ay = gy + tx * std::sin(rot) + ty * std::cos(rot);
+        }
         tr.kind->draw(g, tr.L, ax, ay, d, tA, tr.bh, s, laneY, distPx);
-        if (tr.style == Style::Emoji) {
-            const float hgt = (fig.top + fig.bottom) * s;
-            const float cy = fig.air ? gy + (fig.bottom - fig.top) * s / 2 : gy - fig.top * s / 2;
-            g.emoji(fig.emoji, fx, cy, hgt * 0.95f, (d > 0) == fig.emojiFacesLeft);
+        if (emo) {
+            g.emoji(fig.emoji, fx, cy, es, (d > 0) == fig.emojiFacesLeft, gait[1] * d);
         } else {
             g.push(fx, gy, rot, d * s, s);
             fig.draw(g, st);

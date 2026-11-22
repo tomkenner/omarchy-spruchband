@@ -44,6 +44,9 @@ public:
     const bool air;
     const float front, back, top, bottom, towX, towY, spd, k;
     const bool emojiFacesLeft;
+    // Tow point in the Emoji style, relative to the emoji's centre in emoji sizes (facing right);
+    // NaN = same as towX/towY. The emoji is narrower than the drawn figure, so the banner would hang in the air.
+    float emojiTowX = NAN, emojiTowY = 0;
 };
 
 namespace Figures {
@@ -56,6 +59,25 @@ inline float S(float x) { return std::sin(x); }
 inline float Co(float x) { return std::cos(x); }
 constexpr float PIf = 3.14159265358979f;
 inline float lerpf(float a, float b, float k) { return a + (b - a) * k; }
+
+// Gait for the Emoji style, which has no legs: walkers rock and hop in the same step rhythm the drawn
+// figures move their legs in. out[0] = lift (fraction of the emoji size, negative = up),
+// out[1] = tilt (rad). Flyers hover anyway and stay at 0.
+inline void emojiGait(const Figure &fig, const St &st, float out[2]) {
+    out[0] = out[1] = 0;
+    if (fig.air) return;
+    if (fig.cat == Cat::Person) {
+        const float ph = st.dist / 9;
+        out[0] = -std::abs(S(ph)) * 0.06f;
+        out[1] = S(ph) * 0.13f;
+    } else if (fig.cat == Cat::Animal) {
+        const float ph = st.dist / 7;
+        out[0] = -std::abs(S(ph)) * 0.07f;
+        out[1] = Co(ph) * 0.06f;
+    } else {
+        out[0] = -std::abs(S(st.dist * 0.09f)) * 0.02f;
+    }
+}
 
 namespace C {
 constexpr uint32_t red = 0xFFE5534B, red2 = 0xFFB93A35, cream = 0xFFFFF4DC, yellow = 0xFFF6C344;

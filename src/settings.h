@@ -41,7 +41,7 @@ public:
     void setBand(int v) { set("band", v); }
     int speed() const { return std::clamp(m_s.value("speed", 220).toInt(), 40, 600); }
     void setSpeed(int v) { set("speed", v); }
-    int direction() const { return std::clamp(m_s.value("dir", 0).toInt(), -1, 1); }
+    int direction() const { return std::clamp(m_s.value("dir", -1).toInt(), -1, 1); }
     void setDirection(int v) { set("dir", v); }
     bool quiet() const { return m_s.value("quiet", true).toBool(); }
     void setQuiet(bool v) { set("quiet", v); }

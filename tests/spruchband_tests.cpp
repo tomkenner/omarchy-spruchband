@@ -154,6 +154,13 @@ private slots:
         QCOMPARE(c->lines, QStringList({"x"}));
     }
 
+    // Banners come in from the right unless the user picks otherwise.
+    void directionDefaultsToRightToLeft() {
+        const QString path = m_dir.path() + "/d.conf";
+        write(path, "[General]\n");
+        QCOMPARE(Settings(path).direction(), -1);
+    }
+
     void settingsStayInRange() {
         const QString path = m_dir.path() + "/r.conf";
         write(path, "[General]\nsize=100000\nband=-5\nspeed=0\ndir=7\nquietFrom=99\n");

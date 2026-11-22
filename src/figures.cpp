@@ -29,7 +29,10 @@ class Flugzeug : public Figure {
     const O oDisc{.noLine = true, .alpha = 0.32f};
 
 public:
-    Flugzeug() : Figure("flugzeug", "Biplane", Cat::Vehicle, true, 47, 54, 26, 22, -47, 3, 1, 1, "🛩️") {}
+    Flugzeug() : Figure("flugzeug", "Biplane", Cat::Vehicle, true, 47, 54, 26, 22, -47, 3, 1, 1, "🛩️", false) {
+        emojiTowX = -0.40f;
+        emojiTowY = -0.25f;
+    }
     void bob(const St &st, float out[2]) const override {
         out[0] = S(st.t * 2) * 2.5f;
         out[1] = S(st.t * 1.3f) * 0.035f;
@@ -69,6 +72,8 @@ class Zeppelin : public Figure {
 
 public:
     Zeppelin() : Figure("zeppelin", "Zeppelin", Cat::Vehicle, true, 62, 72, 29, 31, -69, 5, 0.75f, 1, "🛸", false) {
+        emojiTowX = -0.44f;
+        emojiTowY = 0.08f;
         for (float x : {-30.0f, -5.0f, 22.0f}) panels.push_back({x + 2, -19, x - 1, 0, x + 2, 19});
     }
     void bob(const St &st, float out[2]) const override {
@@ -98,7 +103,10 @@ class Auto : public Figure {
     const Pts door{-4, -25, -4, -12}, handle{-12, -21, -8, -21};
 
 public:
-    Auto() : Figure("auto", "Small car", Cat::Vehicle, false, 48, 48, 44, 0, -47, -12, 1.1f, 1, "🚗") {}
+    Auto() : Figure("auto", "Small car", Cat::Vehicle, false, 48, 48, 44, 0, -47, -12, 1.1f, 1, "🚗") {
+        emojiTowX = -0.46f;
+        emojiTowY = 0.22f;
+    }
     void bob(const St &st, float out[2]) const override {
         out[0] = -std::abs(S(st.dist * 0.09f)) * 0.8f;
         out[1] = 0;
@@ -140,7 +148,10 @@ class Storch : public Figure {
     static constexpr uint32_t wingFar = 0xFFE8ECF1;
 
 public:
-    Storch() : Figure("storch", "Stork", Cat::Animal, true, 57, 44, 36, 14, -41, 9, 0.95f, 1, "🕊️") {}
+    Storch() : Figure("storch", "Stork", Cat::Animal, true, 57, 44, 36, 14, -41, 9, 0.95f, 1, "🕊️") {
+        emojiTowX = -0.45f;
+        emojiTowY = 0.1f;
+    }
     void bob(const St &st, float out[2]) const override {
         out[0] = S(st.t * 5 + PIf) * 3;
         out[1] = 0;
@@ -165,7 +176,10 @@ class Hummel : public Figure {
     const O oW1{.alpha = 0.55f}, oW2{.alpha = 0.6f};
 
 public:
-    Hummel() : Figure("hummel", "Bumblebee", Cat::Animal, true, 25, 24, 20, 15, -22, 1, 0.9f, 0.85f, "🐝") {}
+    Hummel() : Figure("hummel", "Bumblebee", Cat::Animal, true, 25, 24, 20, 15, -22, 1, 0.9f, 0.85f, "🐝") {
+        emojiTowX = -0.42f;
+        emojiTowY = 0.15f;
+    }
     void bob(const St &st, float out[2]) const override {
         out[0] = S(st.t * 3) * 6;
         out[1] = S(st.t * 3 + 1) * 0.09f;
